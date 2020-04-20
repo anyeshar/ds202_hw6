@@ -1,0 +1,59 @@
+---
+title: "ds202_hw6"
+author: "Anyesha Ray"
+date: "April 20, 2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(error = TRUE)
+```
+
+Read in Data
+```{r}
+#Libraries
+library(ggplot2)
+library(ggrepel)
+library(tidyverse)
+
+#Read in data
+#BIS=Best in Show
+#BISFS= Best in show full sheet
+
+BIS=readxl::read_xlsx('KIB - Best in Show (public).xlsx', sheet='Best in show', skip = 7)
+BISFS=readxl::read_xlsx('KIB - Best in Show (public).xlsx', sheet='Best in show full sheet', skip = 3)
+
+
+```
+
+
+Clean Data
+```{r}
+BISFS = BISFS[c(1,3,5,7,11,32)]
+names(BISFS) = c("breed","category","score","popularity","intelligence","size")
+BISFS= BISFS[-c(1, 2, 3), ]
+BISFS = na.omit(BISFS)
+```
+
+
+
+Plot
+```{r}
+bolded_title = expression(atop(bold("Best in Show:"),"The Ultimate Data Dog"))
+
+ggplot(BISFS, aes(x=score, y=popularity, size=intelligence, color=category, shape=size)) + geom_point() + 
+  guides(size=FALSE) + scale_color_manual(breaks = c("Herding","Hound","Non-sporting","Sporting","Terrier","Toy","Working"), values=c("coral3","mediumorchid4","mediumseagreen","indianred4","darkgoldenrod4","grey11","paleturquoise4"), aesthetics="Color") + 
+  scale_y_reverse() + geom_text_repel(aes(label=breed), color="black", size = 2.5) + 
+  labs(title=bolded_title, x="data score", y="popularity") + theme_light() +
+  geom_hline(yintercept=43)+ geom_vline(xintercept=2.25) +
+  annotate("text",x=1.3,y=12,label="Inexplicably Overrated")+
+  annotate("text",x=3.5,y=0,label="Hot Dogs!")+
+  annotate("text",x=1.3,y=75,label="The Rightly Ignored")+
+  annotate("text",x=3.3,y=70,label="Overlooked Treasures")
+
+  
+
+
+```
+
